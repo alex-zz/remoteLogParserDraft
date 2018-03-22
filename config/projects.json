@@ -1,0 +1,43 @@
+{
+  "projects" : [
+    {
+      "name" : "Vagrant",
+      "settings" : {
+        "connection" : "@[connections].vagrant_password",
+        "connectionPoolCapacity" : 5,
+        "connectionPoolInitCapacity" : 1
+      },
+      "search" : {
+        "settings" : {"maxSearchIntervalSeconds" : 3600},
+        "log" : {
+          "file" : {
+            "name" : {
+              "template" : "/(date).log/",
+              "timezone" : "#server | #format | Asia/Novosibirsk",
+              "dateFormat" : "YmDHiS"
+            },
+            "record" : {
+              "template" : "^(?P<date>[A-Za-z]{3}\s\d{2}\s\d{2}:\d{2}:\d{2})\s(?:(?P<user>.+?)\s)(?:(?P<command>.+?):)\s(?P<message>.*)",
+              "timezone" : "#server | #format | Asia/Novosibirsk",
+              "dateFormat" : "YmDHiS"
+            }
+          }
+        },
+        "fields" : [
+          {
+            "name" : "date",
+            "type" : "#range(date)",
+            "format" : "Y-m-d H:i:s",
+            "isRequired" : true
+          },
+          {"name" : "user", "type" : "#string"},
+          {"name" : "command", "type" : "#string"},
+          {"name" : "message", "type" : "#string"}
+        ]
+      },
+      "environments" : [
+        {"name" : "live", "pathToLogs" : "/var/www/apache/"}
+      ]
+    }
+  ]
+}
