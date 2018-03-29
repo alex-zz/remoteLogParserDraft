@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter/ssh"
-	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter/pool"
 	"time"
 	"github.com/alex-zz/remoteLogParserDraft/lib/config"
 	"github.com/vjeantet/jodaTime"
@@ -11,10 +9,10 @@ import (
 
 func main() {
 
-	//testConfig()
+	testConfig()
 	//testPool()
 	//testTimeout()
-	testDate()
+	//testDate()
 
 	//c := ssh.Connection{}
 	//connection, _ := ssh_connection.NewSshConnection("192.168.42.42", 22, "vagrant", "vagrant")
@@ -31,12 +29,13 @@ func testDate() {
 }
 
 func testConfig() {
-	c := config.Config{}
-	c.Load()
+	config.Load()
 
-	settings := c.ConnectionList[0].Settings
+	//fmt.Print(err)
+	//fmt.Print(c)
+	//c.GetConnectionsConfiguration()
 
-	fmt.Print(settings)
+	//fmt.Print(c)
 }
 
 func testTimeout() {
@@ -81,7 +80,7 @@ func testTimeout() {
 func testPool() {
 	fmt.Println("Pool test")
 
-	c := config.Config{}
+	/*c := config.Config{}
 	c.Load()
 
 	settings := c.ConnectionList[0].Settings
@@ -93,7 +92,7 @@ func testPool() {
 
 	item, _ := p.Get()
 	(*item.GetAdapter()).Find()
-	item.Release()
+	item.Release()*/
 
 	/*go func() {
 		item, _ := p.Get()

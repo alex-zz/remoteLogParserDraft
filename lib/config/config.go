@@ -1,35 +1,38 @@
 package config
 
 import (
-	"os"
-	"encoding/json"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"github.com/asaskevich/govalidator"
 )
 
 type Config struct {
-	ConnectionList []struct {
-		Name     string `json:"name"`
-		Adapter  string `json:"adapter"`
-		Settings `json:"settings"`
-	} `json:"connectionList"`
+	Connections []Connection `valid:"required"`
+	Projects    []Project
 }
 
-type Settings struct {
-	Host     string `json:"host"`
-	Port     int    `json:"port"`
-	User     string `json:"user"`
-	Password string `json:"password"`
-}
+func Load() (*Config, error) {
+	c := &Config{}
 
-func (c *Config) Load() (*Config, error) {
-	configFile, err := os.Open("config/projects.json")
-	defer configFile.Close()
-
+	source, err := ioutil.ReadFile("config/config.yaml")
 	if err != nil {
 		return nil, err
 	}
 
-	jsonParser := json.NewDecoder(configFile)
-	jsonParser.Decode(c)
+	err = yaml.Unmarshal(source, c)
+	if err != nil {
+		return nil, err
+	}
+
+	err = c.Validate()
+	if err != nil {
+		return nil, err
+	}
 
 	return c, nil
+}
+
+func (c *Config) Validate() error {
+	_, err := govalidator.ValidateStruct(c)
+	return err
 }

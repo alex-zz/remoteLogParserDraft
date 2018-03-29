@@ -15,14 +15,14 @@ type Connection struct {
 	conn *ssh.Client
 }
 
-func CreateConnection(settings *config.Settings) (*Connection, error) {
+func CreateConnection(connectionConfig *config.Connection) (*Connection, error) {
 	c := &Connection{}
 
 	//todo handle auth keys
 	sshConfig := &ssh.ClientConfig{
-		User: settings.User,
+		User: connectionConfig.Settings.User,
 		Auth: []ssh.AuthMethod{
-			ssh.Password(settings.Password),
+			ssh.Password(connectionConfig.Settings.Password),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		Timeout: time.Second * 5,
@@ -30,7 +30,8 @@ func CreateConnection(settings *config.Settings) (*Connection, error) {
 
 	var err error
 
-	c.conn, err = ssh.Dial("tcp", settings.Host+":"+strconv.Itoa(settings.Port), sshConfig)
+	addr := connectionConfig.Settings.Host+":"+strconv.Itoa(connectionConfig.Settings.Port)
+	c.conn, err = ssh.Dial("tcp", addr, sshConfig)
 	if err != nil {
 		return nil, err
 	}

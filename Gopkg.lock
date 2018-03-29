@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/asaskevich/govalidator"
+  packages = ["."]
+  revision = "ccb8e960c48f04d6935e72476ae4a51028f9e22f"
+  version = "v9"
+
+[[projects]]
   branch = "master"
   name = "github.com/vjeantet/jodaTime"
   packages = ["."]
@@ -20,9 +26,15 @@
   ]
   revision = "80db560fac1fb3e6ac81dbc7f8ae4c061f5257bd"
 
+[[projects]]
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
+  version = "v2.2.1"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8f07c9c41bca92cad82eed25dfc73c29d80fa0e047542ad1ca4ce74c4bf1dca1"
+  inputs-digest = "62fc44f83fd6c8e1ffc0180a82045b3fcb6939a7baa21aa7fcb8c9fd8812e451"
   solver-name = "gps-cdcl"
   solver-version = 1
