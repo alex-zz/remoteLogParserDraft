@@ -5,10 +5,10 @@ import (
 )
 
 type Item struct {
-	adapter *Adapter
-	pool *Pool
+	adapter      *Adapter
+	pool         *Pool
 	releasedTime time.Time
-	idle bool
+	idle         bool
 }
 
 func (i *Item) GetAdapter() *Adapter {
@@ -16,18 +16,16 @@ func (i *Item) GetAdapter() *Adapter {
 }
 
 func (i *Item) Release() {
-	i.idle = true;
 	i.releasedTime = time.Now().UTC()
-	i.pool.c <- i
+	i.pool.items <- i
 }
 
 func (i *Item) Destroy() {
-	i.idle = false;
-	(*i.adapter).Destroy()
+	(*i.GetAdapter()).Destroy()
 }
 
 func (i *Item) isReadyForDestroy() bool {
-	expireTime := time.Now().Local().Add(i.pool.lifetime)
+	expireTime := time.Now().Local().Add(i.pool.config.Lifetime)
 
-	return i.releasedTime.After(expireTime)
+	return i.releasedTime.After(expireTime) || !(*i.GetAdapter()).IsActive()
 }

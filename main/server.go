@@ -2,23 +2,69 @@ package main
 
 import (
 	"fmt"
-	"time"
 	"github.com/alex-zz/remoteLogParserDraft/lib/config"
 	"github.com/vjeantet/jodaTime"
+	"time"
+	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter/ssh"
+	"errors"
+	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter/pool"
 )
 
 func main() {
-
-	testConfig()
+	//testConfig()
 	//testPool()
-	//testTimeout()
 	//testDate()
 
-	//c := ssh.Connection{}
-	//connection, _ := ssh_connection.NewSshConnection("192.168.42.42", 22, "vagrant", "vagrant")
-	//result, _  := connection.RunCommand("ls -la")
-	//fmt.Println(result)
+	c, _ := config.Load()
+	initPoolList(c)
 }
+
+func initPoolList(c *config.Config) map[string]map[string]*pool.Pool {
+
+	var poolList map[string]map[string]*pool.Pool
+
+	for _, project := range c.Projects {
+		for _, env := range project.Environments {
+			name := env.Settings.Connection
+			settings := getConnectionSettings(name, c)
+
+			switch settings.Adapter {
+			case "{{adapter.ssh}}":
+				factory := ssh.Factory{}
+				factory.ConnectionConfig = settings
+
+				poolConfig := pool.Config{
+					Cap: env.Settings.ConnectionPoolCapacity,
+					InitCap: env.Settings.ConnectionPoolInitCapacity,
+					Lifetime: time.Second * 30,
+					Timeout: time.Second * 10,
+					Factory: &factory,
+				}
+				p, _ := pool.New(poolConfig)
+				poolList[project.Name][env.Name] = p
+
+			default:
+				errors.New("incorrect adapter")
+			}
+		}
+	}
+
+	return poolList
+}
+
+func getConnectionSettings(name string, c *config.Config) *config.Connection {
+
+	var settings *config.Connection
+
+	for _, connection := range c.Connections {
+		if connection.Name == name {
+			settings = &connection
+		}
+	}
+
+	return settings
+}
+
 
 func testDate() {
 	date := jodaTime.Format("YYYY.MM.dd", time.Now())
@@ -36,45 +82,6 @@ func testConfig() {
 	//c.GetConnectionsConfiguration()
 
 	//fmt.Print(c)
-}
-
-func testTimeout() {
-
-	c := make(chan int, 10)
-
-	c <- 1
-	c <- 2
-
-	fmt.Println(len(c))
-
-	ticker := time.NewTicker(2 * time.Second)
-
-	fmt.Println("Pool test")
-
-	for range ticker.C {
-		fmt.Println("Tick")
-
-		var s []int
-
-		for len(c) > 0 {
-			item := <- c
-			fmt.Println("Iter")
-			s = append(s, item)
-			fmt.Println(len(c))
-		}
-
-		/*for item := range c {
-			fmt.Println("Iter")
-			s = append(s, item)
-			fmt.Println(len(c))
-		}*/
-
-		for _, item := range s {
-			c <- item
-		}
-	}
-
-	fmt.Println("Pool test 2")
 }
 
 func testPool() {

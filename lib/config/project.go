@@ -1,12 +1,7 @@
 package config
 
 type Project struct {
-	Name string `yaml:"name"`
-	Settings struct {
-		ConnectionPoolCapacity     int    `yaml:"connectionPoolCapacity"`
-		Connection                 string `yaml:"connection"`
-		ConnectionPoolInitCapacity int    `yaml:"connectionPoolInitCapacity"`
-	} `yaml:"settings"`
+	Name     string `yaml:"name"`
 	Search struct {
 		Fields []struct {
 			IsRequired bool   `yaml:"isRequired"`
@@ -30,8 +25,15 @@ type Project struct {
 			MaxSearchIntervalSeconds int `yaml:"maxSearchIntervalSeconds"`
 		} `yaml:"settings"`
 	} `yaml:"search"`
-	Environments []struct {
-		Name       string `yaml:"name"`
-		PathToLogs string `yaml:"pathToLogs"`
-	} `yaml:"environments"`
+	Environments []Environment `yaml:"environments"`
+}
+
+type Environment struct {
+	Name       string `yaml:"name"`
+	PathToLogs string `yaml:"pathToLogs"`
+	Settings struct {
+		ConnectionPoolCapacity     int    `yaml:"connectionPoolCapacity"`
+		Connection                 string `yaml:"connection"`
+		ConnectionPoolInitCapacity int    `yaml:"connectionPoolInitCapacity"`
+	} `yaml:"settings"`
 }

@@ -1,15 +1,14 @@
 package ssh
 
 import (
-	"golang.org/x/crypto/ssh"
-	"time"
-	"strconv"
 	"fmt"
-	"strings"
 	"github.com/alex-zz/remoteLogParserDraft/lib/config"
+	"golang.org/x/crypto/ssh"
+	"strconv"
+	"strings"
+	"time"
+	"github.com/alex-zz/remoteLogParserDraft/lib/search"
 )
-
-//todo keep alive
 
 type Connection struct {
 	conn *ssh.Client
@@ -25,16 +24,32 @@ func CreateConnection(connectionConfig *config.Connection) (*Connection, error) 
 			ssh.Password(connectionConfig.Settings.Password),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
-		Timeout: time.Second * 5,
+		Timeout:         time.Second * 5,
 	}
 
 	var err error
 
-	addr := connectionConfig.Settings.Host+":"+strconv.Itoa(connectionConfig.Settings.Port)
+	addr := connectionConfig.Settings.Host + ":" + strconv.Itoa(connectionConfig.Settings.Port)
 	c.conn, err = ssh.Dial("tcp", addr, sshConfig)
 	if err != nil {
 		return nil, err
 	}
+
+	//todo keep alive
+	/*
+		    go func() {
+	        t := time.NewTicker(2 * time.Second)
+	        defer t.Stop()
+	        for {
+	            <-t.C
+	            _, _, err := client.Conn.SendRequest("keepalive@golang.org", true, nil)
+	            if err != nil {
+	                return
+	            }
+	        }
+	    }()
+
+	*/
 
 	return c, nil
 }
@@ -67,7 +82,13 @@ func (c *Connection) Destroy() {
 	}
 }
 
-func (c * Connection) Find() {
+func (c *Connection) IsActive() bool {
+	return true
+}
+
+func (c *Connection) Find(criteria *search.Criteria) (*search.Result, error) {
 	res, _ := c.RunCommand("echo Test From Server")
 	fmt.Printf(res)
+	r := &search.Result{}
+	return r, nil
 }

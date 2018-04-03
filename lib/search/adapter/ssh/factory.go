@@ -6,11 +6,10 @@ import (
 )
 
 type Factory struct {
-	Settings *config.Settings
+	ConnectionConfig *config.Connection
 }
 
-func (f *Factory) Create() (pool.Adapter, error){
-	c, _ := CreateConnection(f.Settings)
-
-	return c, nil
+func (f *Factory) Create() (pool.Adapter, error) {
+	c, err := CreateConnection(f.ConnectionConfig)
+	return c, err
 }

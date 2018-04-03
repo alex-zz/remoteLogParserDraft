@@ -1,13 +1,13 @@
 connections:
 - name: vagrant_password
-  adapter: "#ssh"
+  adapter: "{{adapter.ssh}}"
   settings:
     host: 192.168.42.42
     port: 22
     user: vagrant
     password: vagrant
 - name: vagrant_key
-  adapter: "#ssh"
+  adapter: "{{adapter.ssh}}"
   settings:
     host: 192.168.42.42
     port: 22
@@ -17,34 +17,35 @@ connections:
 
 projects:
 - name: Vagrant
-  settings:
-    connection: "vagrant_password"
-    connectionPoolCapacity: 5
-    connectionPoolInitCapacity: 1
   search:
     settings:
       maxSearchIntervalSeconds: 3600
     logFile:
       name:
-        template: "/(date).log/"
-        timezone: "#server | #format | Asia/Novosibirsk"
-        dateFormat: YmDHiS
+        template: "^(?P<date>\\d{2}\\d{2}\\d{2}\\d{2}).log"
+        timezone: "{{timezone.server}} | {{timezone.format}} | Asia/Novosibirsk"
+        dateFormat: "Ymdhis"
       record:
         template: "^(?P<date>[A-Za-z]{3} \\d{2} \\d{2}:\\d{2}:\\d{2}) (?:(?P<user>.+?) )(?:(?P<command>.+?):) (?P<message>.*)"
-        timezone: "#server | #format | Asia/Novosibirsk"
-        dateFormat: YmDHiS
+        timezone: "{{timezone.server}} | {{timezone.format}} | Asia/Novosibirsk"
+        dateFormat: "Ymdhis"
     fields:
     - name: date
-      type: "#range(date)"
-      format: Y-m-d H:i:s
+      type: "{{type.range(date)}}"
+      format: "Y-m-d H:i:s"
       isRequired: true
     - name: user
-      type: "#string"
+      type: "{{type.string}}"
     - name: command
-      type: "#string"
+      type: "{{type.string}}"
     - name: message
-      type: "#string"
+      type: "{{type.string}}"
   environments:
   - name: live
     pathToLogs: "/var/www/apache/"
+    settings:
+      connection: "vagrant_password"
+      connectionPoolCapacity: 5
+      connectionPoolInitCapacity: 1
+
 

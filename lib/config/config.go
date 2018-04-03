@@ -1,14 +1,14 @@
 package config
 
 import (
+	"github.com/asaskevich/govalidator"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"github.com/asaskevich/govalidator"
 )
 
 type Config struct {
 	Connections []Connection `valid:"required"`
-	Projects    []Project
+	Projects    []Project `valid:"required"`
 }
 
 func Load() (*Config, error) {
@@ -24,7 +24,7 @@ func Load() (*Config, error) {
 		return nil, err
 	}
 
-	err = c.Validate()
+	err = c.validate()
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func Load() (*Config, error) {
 	return c, nil
 }
 
-func (c *Config) Validate() error {
+func (c *Config) validate() error {
 	_, err := govalidator.ValidateStruct(c)
 	return err
 }
