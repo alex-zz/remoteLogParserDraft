@@ -5,9 +5,8 @@ import (
 	"github.com/alex-zz/remoteLogParserDraft/lib/config"
 	"github.com/vjeantet/jodaTime"
 	"time"
-	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter/ssh"
-	"errors"
 	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter/pool"
+	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter"
 )
 
 func main() {
@@ -26,43 +25,22 @@ func initPoolList(c *config.Config) map[string]map[string]*pool.Pool {
 	for _, project := range c.Projects {
 		for _, env := range project.Environments {
 			name := env.Settings.Connection
-			settings := getConnectionSettings(name, c)
+			connConfig := c.GetConnectionConfig(name)
 
-			switch settings.Adapter {
-			case "{{adapter.ssh}}":
-				factory := ssh.Factory{}
-				factory.ConnectionConfig = settings
-
-				poolConfig := pool.Config{
-					Cap: env.Settings.ConnectionPoolCapacity,
-					InitCap: env.Settings.ConnectionPoolInitCapacity,
-					Lifetime: time.Second * 30,
-					Timeout: time.Second * 10,
-					Factory: &factory,
-				}
-				p, _ := pool.New(poolConfig)
-				poolList[project.Name][env.Name] = p
-
-			default:
-				errors.New("incorrect adapter")
+			factory, _ := adapter.GetAdapterFactory(connConfig)
+			poolConfig := pool.Config{
+				Cap: env.Settings.ConnectionPoolCapacity,
+				InitCap: env.Settings.ConnectionPoolInitCapacity,
+				Lifetime: time.Second * 30,
+				Timeout: time.Second * 10,
+				Factory: &factory,
 			}
+			p, _ := pool.New(poolConfig)
+			poolList[project.Name][env.Name] = p
 		}
 	}
 
 	return poolList
-}
-
-func getConnectionSettings(name string, c *config.Config) *config.Connection {
-
-	var settings *config.Connection
-
-	for _, connection := range c.Connections {
-		if connection.Name == name {
-			settings = &connection
-		}
-	}
-
-	return settings
 }
 
 

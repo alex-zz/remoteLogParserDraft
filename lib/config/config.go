@@ -32,6 +32,32 @@ func Load() (*Config, error) {
 	return c, nil
 }
 
+func (c *Config) GetConnectionConfig(name string) *Connection {
+	var connConfig *Connection
+
+	for _, connection := range c.Connections {
+		if connection.Name == name {
+			connConfig = &connection
+			break
+		}
+	}
+
+	return connConfig
+}
+
+func (c *Config) GetProjectConfig(name string) *Project {
+	var projectConfig *Project
+
+	for _, project := range c.Projects {
+		if project.Name == name {
+			projectConfig = &project
+			break
+		}
+	}
+
+	return projectConfig
+}
+
 func (c *Config) validate() error {
 	_, err := govalidator.ValidateStruct(c)
 	return err

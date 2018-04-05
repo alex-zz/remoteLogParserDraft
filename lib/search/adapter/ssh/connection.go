@@ -2,7 +2,6 @@ package ssh
 
 import (
 	"fmt"
-	"github.com/alex-zz/remoteLogParserDraft/lib/config"
 	"golang.org/x/crypto/ssh"
 	"strconv"
 	"strings"
@@ -14,14 +13,14 @@ type Connection struct {
 	conn *ssh.Client
 }
 
-func CreateConnection(connectionConfig *config.Connection) (*Connection, error) {
+func CreateConnection(config *Config) (*Connection, error) {
 	c := &Connection{}
 
 	//todo handle auth keys
 	sshConfig := &ssh.ClientConfig{
-		User: connectionConfig.Settings.User,
+		User: config.User,
 		Auth: []ssh.AuthMethod{
-			ssh.Password(connectionConfig.Settings.Password),
+			ssh.Password(config.Password),
 		},
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
 		Timeout:         time.Second * 5,
@@ -29,7 +28,7 @@ func CreateConnection(connectionConfig *config.Connection) (*Connection, error) 
 
 	var err error
 
-	addr := connectionConfig.Settings.Host + ":" + strconv.Itoa(connectionConfig.Settings.Port)
+	addr := config.Host + ":" + strconv.Itoa(config.Port)
 	c.conn, err = ssh.Dial("tcp", addr, sshConfig)
 	if err != nil {
 		return nil, err

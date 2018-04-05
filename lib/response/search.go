@@ -27,7 +27,11 @@ package response
         }
       ]
     }
-  ]
+  ],
+  "error" : {
+    "code" : 100,
+    "title" : "data not found"
+  }
 }
 */
 
@@ -37,5 +41,9 @@ type Search struct {
 			Name  string
 			Value string
 		}
+	}
+	Error struct{
+		Code int
+		Title string
 	}
 }

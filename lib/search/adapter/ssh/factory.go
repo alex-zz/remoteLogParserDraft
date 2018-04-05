@@ -1,15 +1,14 @@
 package ssh
 
 import (
-	"github.com/alex-zz/remoteLogParserDraft/lib/config"
 	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter/pool"
 )
 
 type Factory struct {
-	ConnectionConfig *config.Connection
+	Config *Config
 }
 
 func (f *Factory) Create() (pool.Adapter, error) {
-	c, err := CreateConnection(f.ConnectionConfig)
+	c, err := CreateConnection(f.Config)
 	return c, err
 }

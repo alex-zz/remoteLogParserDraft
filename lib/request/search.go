@@ -2,16 +2,16 @@ package request
 
 /*
 {
-  "project" : "GN",
+  "project" : "Vagrant",
   "environment" : "live",
-  "criteria" : [
+  "fields" : [
     {
-      "field" : "date",
+      "name" : "date",
       "start" : "2018-04-03",
       "end" : "2018-04-03"
     },
     {
-      "field" : "user",
+      "name" : "user",
       "value" : "test"
     }
   ]
@@ -22,7 +22,7 @@ type Search struct {
 	Project string
 	Environment string
 	Fields []struct{
-		Field string
+		Name string
 		Value string
 		Start string
 		End string

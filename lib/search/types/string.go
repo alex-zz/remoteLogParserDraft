@@ -1,10 +1,9 @@
 package types
 
 type String struct {
-	Name string
 	Value string
 }
 
-func (s *String) Compare(val interface{}) bool {
+func (s *String) Compare(val string) bool {
 	return s.Value == val
 }
