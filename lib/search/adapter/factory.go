@@ -3,7 +3,6 @@ package adapter
 import (
 	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter/pool"
 	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter/ssh"
-	"github.com/alex-zz/remoteLogParserDraft/lib/config"
 	"errors"
 )
 
@@ -15,19 +14,19 @@ func GetAvailableAdapters() []string {
 	return []string{AdapterSSH}
 }
 
-func GetAdapterFactory(config *config.Connection) (pool.Creator, error) {
+func GetAdapterFactory(adapterName string, config *Config) (pool.Creator, error) {
 	var c pool.Creator
 	var err error
 
-	switch config.Adapter {
+	switch adapterName {
 	case AdapterSSH:
 		factory := &ssh.Factory{}
 		factory.Config = &ssh.Config{
-			Host: config.Settings.Host,
-			Port: config.Settings.Port,
-			User: config.Settings.User,
-			Password: config.Settings.Password,
-			KeyPath: config.Settings.KeyPath,
+			Host: config.Host,
+			Port: config.Port,
+			User: config.User,
+			Password: config.Password,
+			KeyPath: config.KeyPath,
 		}
 		c = factory
 	default:

@@ -1,8 +1,6 @@
 package search
 
 import (
-	"github.com/alex-zz/remoteLogParserDraft/lib/request"
-	"github.com/alex-zz/remoteLogParserDraft/lib/config"
 	"github.com/alex-zz/remoteLogParserDraft/lib/search/types"
 )
 
@@ -26,7 +24,8 @@ type Criteria struct {
 	}
 }
 
-func Build(request request.Search, config config.Config) *Criteria {
+//todo Import cycle with config
+/*func Build(request request.Search, config config.Config) *Criteria {
 	c := &Criteria{}
 
 	projectConfig := config.GetProjectConfig(request.Project)
@@ -52,4 +51,4 @@ func Build(request request.Search, config config.Config) *Criteria {
 	}
 
 	return c
-}
+}*/

@@ -1,21 +1,22 @@
 package main
 
 import (
-	"fmt"
-	"github.com/alex-zz/remoteLogParserDraft/lib/config"
-	"github.com/vjeantet/jodaTime"
 	"time"
+	"github.com/alex-zz/remoteLogParserDraft/lib/config"
 	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter/pool"
 	"github.com/alex-zz/remoteLogParserDraft/lib/search/adapter"
+	"github.com/vjeantet/jodaTime"
+	"fmt"
+	"strconv"
 )
 
 func main() {
-	//testConfig()
+	testConfig()
 	//testPool()
 	//testDate()
 
-	c, _ := config.Load()
-	initPoolList(c)
+	/*c, _ := config.Load()
+	initPoolList(c)*/
 }
 
 func initPoolList(c *config.Config) map[string]map[string]*pool.Pool {
@@ -27,13 +28,23 @@ func initPoolList(c *config.Config) map[string]map[string]*pool.Pool {
 			name := env.Settings.Connection
 			connConfig := c.GetConnectionConfig(name)
 
-			factory, _ := adapter.GetAdapterFactory(connConfig)
+			port, _ := strconv.Atoi(connConfig.Settings.Port)
+
+			adapterConfig := &adapter.Config{
+				Host: connConfig.Settings.Host,
+				Port: port,
+				User: connConfig.Settings.User,
+				Password: connConfig.Settings.Password,
+				KeyPath: connConfig.Settings.KeyPath,
+			}
+
+			factory, _ := adapter.GetAdapterFactory(connConfig.Adapter, adapterConfig)
 			poolConfig := pool.Config{
 				Cap: env.Settings.ConnectionPoolCapacity,
 				InitCap: env.Settings.ConnectionPoolInitCapacity,
 				Lifetime: time.Second * 30,
 				Timeout: time.Second * 10,
-				Factory: &factory,
+				Factory: factory,
 			}
 			p, _ := pool.New(poolConfig)
 			poolList[project.Name][env.Name] = p
@@ -53,7 +64,8 @@ func testDate() {
 }
 
 func testConfig() {
-	config.Load()
+	_, err := config.Load()
+	fmt.Print(err)
 
 	//fmt.Print(err)
 	//fmt.Print(c)
