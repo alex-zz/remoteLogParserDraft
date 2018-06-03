@@ -1,7 +1,5 @@
 package types
 
-import "errors"
-
 const (
 	TypeDate = "{{type.date}}"
 	TypeString = "{{type.string}}"
@@ -20,7 +18,7 @@ func BuildType(typeName string, data Data) (Comparator, error) {
 		return c, err
 	}
 
-	switch typeName {
+	/**switch typeName {
 	case TypeDate:
 		c = &Date{
 			Value: data.Value,
@@ -47,7 +45,7 @@ func BuildType(typeName string, data Data) (Comparator, error) {
 		}
 	default:
 		err = errors.New("unsupported type")
-	}
+	}*/
 
 	return c, err
 }
