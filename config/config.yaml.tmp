@@ -1,0 +1,48 @@
+connections:
+- name: vagrant_password
+  adapter: "{{adapter.ssh}}"
+  settings:
+    host: 192.168.42.42
+    port: 22
+    user: vagrant
+    password: vagrant
+- name: vagrant_key
+  adapter: "{{adapter.ssh}}"
+  settings:
+    host: 192.168.42.42
+    port: 22
+    user: vagrant
+    password: vagrant
+    keyPath: '/home/.ssh/id_rsa'
+
+projects:
+- name: Vagrant
+  search:
+    settings:
+      maxSearchIntervalSeconds: 3600
+    logFile:
+      name:
+        template: "^(?P<date>\\d{2}\\d{2}\\d{2}\\d{2}).log"
+        timezone: "{{timezone.server}} | {{timezone.format}} | Asia/Novosibirsk"
+        dateFormat: "Ymdhis"
+      record:
+        template: "^(?P<date>[A-Za-z]{3} \\d{2} \\d{2}:\\d{2}:\\d{2}) (?:(?P<user>.+?) )(?:(?P<command>.+?):) (?P<message>.*)"
+        timezone: "{{timezone.server}} | {{timezone.format}} | Asia/Novosibirsk"
+        dateFormat: "Ymdhis"
+    fields:
+    - name: date
+      type: "{{type.range(date)}}"
+      isRequired: true
+    - name: user
+      type: "{{type.string}}"
+    - name: command
+      type: "{{type.string}}"
+    - name: message
+      type: "{{type.string}}"
+  environments:
+  - name: live
+    pathToLogs: "/var/www/apache/"
+    settings:
+      connection: "vagrant_password"
+      connectionPoolCapacity: 5
+      connectionPoolInitCapacity: 1
